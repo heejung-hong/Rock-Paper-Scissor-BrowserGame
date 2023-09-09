@@ -19,7 +19,9 @@ const pResultEl = document.getElementById('p-result');
 const cResultEl = document.getElementById('c-result');
 
 /*-------- event listeners --------*/
-
+// main is the parent so add a guard so that it only recognizes the button
+document.querySelector('main')
+  .addEventListener('click', handleChoice); // don't invoke handleChoice, just provide
 
 /*----------- functions -----------*/
 init(); // calling init function
@@ -39,20 +41,47 @@ function init() {
   render();
 }
 
+// in response to user interaction (player makes a move),
+// we update all impacted state, then finally, call render()
+function handleChoice(event) {
+  // console.log(event)
+  // Guards (do nothing unless one of the three buttons were clicked)
+  if (event.target.tagName !== 'BUTTON') return;
+  // console.log(event.target.tagName)
+  // Player has made a choice
+  results.p = event.target.innerText.toLowerCase();
+  // Compute a random choice for the computer
+  results.c = getRandomRPS();
+  winner = getWinner();
+
+  render();
+}
+
+function getWinner() {
+  
+}
+
+function getRandomRPS() {
+  const rps = Object.keys(RPS_LOOKUP);
+  const rndIdx = Math.floor(Math.random() * rps.length) // 0 to a certain number
+  return rps[rndIdx];
+}
+
 function renderScores() {
   for (let key in scores) { // 1st loop, key will hold p, 2nd loop, key will hold t, 3rd loop, key will hold c
     const scoreEl = document.getElementById(`${key}-score`)
     scoreEl.innerText = scores[key]; // key is used to access the property of scores object
   }
-};
+}
 
 function renderResults() {
   // create src element
   pResultEl.src = RPS_LOOKUP[results.p];
   cResultEl.src = RPS_LOOKUP[results.c];
-};
+}
 
+// Transfer/vidualize all state to the DOM
 function render() {
   renderScores();
   renderResults();
-};
+}
