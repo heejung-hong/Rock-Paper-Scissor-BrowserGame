@@ -1,5 +1,9 @@
 /*---------- constraints ----------*/
-
+const RPS_LOOKUP = {
+  r: 'imgs/rock.png',
+  p: 'imgs/paper.png',
+  s: 'imgs/scissors.png'
+};
 
 /*---- aap's state (variables) ----*/
 // State is the data that has to be remembered while the app is running.
@@ -10,7 +14,9 @@ let results;// Object key of 'p' -> Player Results; 't'
 let winner; // String 'p' if player wins, 't' for tie, 'c' if computer wins
 
 /*--- cached element references ---*/
-
+// cached element we can reder to by setting the dot src properties
+const pResultEl = document.getElementById('p-result');
+const cResultEl = document.getElementById('c-result');
 
 /*-------- event listeners --------*/
 
@@ -33,6 +39,20 @@ function init() {
   render();
 }
 
+function renderScores() {
+  for (let key in scores) { // 1st loop, key will hold p, 2nd loop, key will hold t, 3rd loop, key will hold c
+    const scoreEl = document.getElementById(`${key}-score`)
+    scoreEl.innerText = scores[key]; // key is used to access the property of scores object
+  }
+};
+
+function renderResults() {
+  // create src element
+  pResultEl.src = RPS_LOOKUP[results.p];
+  cResultEl.src = RPS_LOOKUP[results.c];
+};
+
 function render() {
-  
+  renderScores();
+  renderResults();
 };
