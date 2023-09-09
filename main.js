@@ -1,8 +1,8 @@
 /*---------- constraints ----------*/
 const RPS_LOOKUP = {
-  r: 'imgs/rock.png',
-  p: 'imgs/paper.png',
-  s: 'imgs/scissors.png'
+  r: {img: 'imgs/rock.png', beats: 's'},
+  p: {img: 'imgs/paper.png', beats: 'r'},
+  s: {img: 'imgs/scissors.png', beats: 'p'}
 };
 
 /*---- aap's state (variables) ----*/
@@ -17,6 +17,7 @@ let winner; // String 'p' if player wins, 't' for tie, 'c' if computer wins
 // cached element we can reder to by setting the dot src properties
 const pResultEl = document.getElementById('p-result');
 const cResultEl = document.getElementById('c-result');
+const countdownEl = document.getElementById('countdown');
 
 /*-------- event listeners --------*/
 // main is the parent so add a guard so that it only recognizes the button
@@ -53,12 +54,13 @@ function handleChoice(event) {
   // Compute a random choice for the computer
   results.c = getRandomRPS();
   winner = getWinner();
-
+  scores[winner] += 1;
   render();
 }
 
 function getWinner() {
-  
+  if (results.p === results.c) return 't';
+  return RPS_LOOKUP[results.p].beats === results.c ? 'p' : 'c';
 }
 
 function getRandomRPS() {
@@ -76,12 +78,32 @@ function renderScores() {
 
 function renderResults() {
   // create src element
-  pResultEl.src = RPS_LOOKUP[results.p];
-  cResultEl.src = RPS_LOOKUP[results.c];
+  pResultEl.src = RPS_LOOKUP[results.p].img;
+  cResultEl.src = RPS_LOOKUP[results.c].img;
+  pResultEl.style.borderColor = winner === 'p' ? 'grey' : 'white';
+  cResultEl.style.borderColor = winner === 'c' ? 'grey' : 'white';
 }
 
 // Transfer/vidualize all state to the DOM
 function render() {
-  renderScores();
-  renderResults();
+  renderCountdown(function() {
+    renderScores();
+    renderResults();
+  });
+}
+
+function renderCountdown(cb) {
+  let count = 3;  
+  countdownEl.style.visibility = 'visible';
+  countdownEl.innerText = count;
+  const timerId = setInterval(function() {
+    count--;
+    if (count) {
+      countdownEl.innerText = count;
+    } else {
+      clearInterval(timerId);
+      countdownEl.style.visibility = 'hidden';
+      cb();
+    }
+  }, 1000)
 }
